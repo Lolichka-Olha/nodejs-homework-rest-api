@@ -11,12 +11,12 @@ const userSchema = new Schema(
     password: {
       type: String,
       minlength: 6,
-      required: [true, "Set password for user"]
+      required: [true, "Password is required"]
     },
     email: {
       type: String,
       required: [true, "Email is required"],
-      match: emailRegexp,
+      match: [emailRegexp, "Please enter a valid email address"],
       unique: true
     },
     subscription: {
@@ -27,6 +27,10 @@ const userSchema = new Schema(
     token: {
       type: String,
       default: ""
+    },
+    avatarURL: {
+      type: String,
+      required: true
     }
   },
   { versionKey: false, timestamps: true }
@@ -38,13 +42,17 @@ const User = model("user", userSchema);
 
 const registerSchema = Joi.object({
   password: Joi.string().min(6).required(),
-  email: Joi.string().pattern(emailRegexp).required(),
+  email: Joi.string().pattern(emailRegexp).required().messages({
+    "string.pattern.base": `Please enter a valid email address`
+  }),
   subscription: Joi.string().valid("starter", "pro", "business")
 });
 
 const loginSchema = Joi.object({
-  password: Joi.string().min(6).required(),
-  email: Joi.string().pattern(emailRegexp).required()
+  email: Joi.string().pattern(emailRegexp).required().messages({
+    "string.pattern.base": `Please enter a valid email address`
+  }),
+  password: Joi.string().min(6).required()
 });
 
 const updateSubscriptionSchema = Joi.object({
