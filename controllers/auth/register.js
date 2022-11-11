@@ -31,7 +31,8 @@ const register = async (req, res) => {
       user: {
         email: result.email,
         subscription,
-        avatarURL
+        avatarURL,
+        verificationToken
       }
     }
   });
